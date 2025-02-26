@@ -5,6 +5,7 @@ import axios from "axios";
 import OrgBanner from "@/components/OrgBanner";
 import { CampaignSchema, OrgSchema } from "@/lib/zod";
 import { z } from "zod";
+import Footer from "@/components/Footer";
 
 type Campaign = z.infer<typeof CampaignSchema>;
 type Org = z.infer<typeof OrgSchema>;
@@ -36,6 +37,7 @@ export default async function Home() {
             </div>
             <CampaignBanner campaigns={campaigns}/>
             <OrgBanner orgs={orgs}/>
+            <Footer/>
         </div>
     );
 }
