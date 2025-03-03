@@ -22,7 +22,7 @@ export default function Footer() {
                     </div>
                 </div>
             </div>
-            <div className="text-center">© 2023 VibrantDonations. All rights reserved.</div>
+            <div className="text-center">© 2025 Impact Seed. All rights reserved.</div>
         </div>
         
     )

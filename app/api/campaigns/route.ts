@@ -6,10 +6,26 @@ import { CampaignSchema } from "@/lib/zod";
 export async function GET(req: NextRequest) {
     try {
         
+        const searchParams = req.nextUrl.searchParams;
+
+        const search = searchParams.get('search');
+        const filter = searchParams.get('filter');
+
+        const whereCondition: any = { approved: true };
+
+        if (search && search !== 'undefined') {
+            whereCondition.OR = [
+                { name: { contains: search, mode: 'insensitive' } },
+                { description: { contains: search, mode: 'insensitive' } }
+            ];
+        }
+        
+        if (filter && filter !== 'undefined') {
+            whereCondition.category = { contains: filter, mode: 'insensitive'};
+        }
+
         const campaigns = await client.campaign.findMany({
-            where: {
-                approved: true
-            },
+            where: whereCondition
         });
 
         return NextResponse.json({

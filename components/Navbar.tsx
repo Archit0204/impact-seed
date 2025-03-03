@@ -1,84 +1,48 @@
 "use client";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import Image from "next/image";
 
 export default function Navbar() {
     const { data: session, status } = useSession();
-    const [dropdownOpen, setDropdownOpen] = useState(false);
     const router = useRouter();
-
-    const toggleDropdown = () => setDropdownOpen((prev) => !prev);
-
-    const donateHandler = () => {
-
-        if (status === "authenticated") {
-            router.push("/campaigns");
-        } else {
-            signIn();
-        }
-
-    }
 
     return (
         <nav className="bg-white flex px-16 pt-4 justify-between items-center">
-            <h1 className="text-2xl font-semibold">Impact Seed</h1>
-            <div className="flex space-x-6">
-                {status === "authenticated" ? (
-                    <>
-                        {/* Donate Button */}
-                        <button onClick={donateHandler} className="bg-customBlack px-4 py-2 text-white rounded-xl font border-2 border-customBlack hover:bg-white hover:text-customBlack hover:border-2 hover:border-customBlack">
-                            Donate
-                        </button>
-
-                        {/* Avatar and Dropdown */}
-                        <div className="relative flex items-center">
-                            <button onClick={toggleDropdown} className="rounded-full w-10 h-10 bg-gray-200 overflow-hidden">
-                                {session.user?.image ? (
-                                    <img
-                                        src={session.user.image}
-                                        alt="Avatar"
-                                        className="w-full h-full object-cover"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full bg-gray-400 flex items-center justify-center text-white font-semibold">
-                                        {session.user?.name?.[0]}
-                                    </div>
-                                )}
-                            </button>
-
-                            {/* Dropdown */}
-                            {dropdownOpen && (
-                                <div className="absolute right-0 top-10 mt-2 w-48 bg-white shadow-lg rounded-lg border border-gray-200">
-                                    <button
-                                        onClick={() => router.push("/profile")}  // Navigate to the profile page
-                                        className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                                    >
-                                        Profile
-                                    </button>
-                                    <button
-                                        onClick={() => signOut()}
-                                        className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                                    >
-                                        Logout
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </>
-                ) : (
-                    <>
-                        <button onClick={donateHandler} className="bg-customBlack px-4 py-2 text-white rounded-xl font border-2 border-customBlack hover:bg-white hover:text-customBlack hover:border-2 hover:border-customBlack">
-                            Donate
-                        </button>
-                        <button
-                            onClick={() => signIn()}
-                            className="bg-customBlack px-4 py-2 text-white rounded-xl font border-2 border-customBlack hover:bg-white hover:text-customBlack hover:border-2 hover:border-customBlack"
-                        >
-                            Signin
-                        </button>
-                    </>
-                )}
+            <h1 onClick={() => router.push('/')} className="text-2xl font-semibold cursor-pointer">Impact Seed</h1>
+            <div className="flex gap-x-6 text-lg font-medium">
+                <button className="hover:underline" onClick={() => router.push('/campaigns')}>Campaigns</button>
+                <button className="hover:underline" onClick={() => router.push('/orgs')}>Orgs</button>
+                <button className="hover:underline" onClick={() => router.push('/volunteers')}>Volunteers</button>
+                {/* <button>Signin</button> */}
+                {
+                    status === "authenticated" ? (
+                        <>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Image className="rounded-full cursor-pointer" src={session.user?.image as string} alt="profile" width={40} height={40}/>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="max-w-64 mr-5">
+                                    <DropdownMenuLabel className="flex flex-col">
+                                        <span>Signed in as</span>
+                                        <span className="text-xs font-normal text-foreground">{session.user?.email}</span>
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuGroup>
+                                        <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/profile')}>Profile</DropdownMenuItem>
+                                        {/* <DropdownMenuItem>Option 2</DropdownMenuItem>
+                                        <DropdownMenuItem>Option 3</DropdownMenuItem> */}
+                                    </DropdownMenuGroup>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>Logout</DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </>
+                    ) : (
+                        <button className="hover:underline" onClick={() => signIn()}>Signin</button>
+                    )
+                }
             </div>
         </nav>
     );

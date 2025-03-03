@@ -6,10 +6,19 @@ export async function GET(req: NextRequest) {
 
     try {
         
+        const searchParams = req.nextUrl.searchParams;
+        const search = searchParams.get('search');
+
+        const whereCondition: any = { verified: true };
+
+        if (search && search !== 'undefined') {
+            
+            whereCondition.name = { contains: search, mode: 'insensitive' }; 
+        }
+
+
         const orgs = await client.org.findMany({
-            where: {
-                verified: true
-            }
+            where: whereCondition
         });
 
         return NextResponse.json({

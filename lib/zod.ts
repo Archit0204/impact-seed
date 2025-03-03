@@ -41,3 +41,16 @@ export const CampaignSchema = z.object({
     org: OrgSchema.optional(),
     user: UserSchema.optional(),
 });
+
+export const VolunteerSchema = z.object({
+    id: z.string().uuid(), 
+    name: z.string().min(1, "Name is required"),
+    description: z.string().min(1, "Description is required"),
+    avatar: z.string().url().optional(), 
+    cause: z.string().min(1, "Cause is required"),
+    location: z.string().min(1, "Location is required"),
+    skills: z.array(z.string()).min(1, "At least one skill is required"), 
+    eventDate: z.date(), 
+    orgId: z.string().min(1, "Organization ID is required"),
+    org: OrgSchema,
+});

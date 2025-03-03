@@ -35,6 +35,7 @@ model Org {
     user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId      String      @unique
     campaigns   Campaign[]
+    volunteer   Volunteer[]
     createdAt   DateTime    @default(now())
     updatedAt   DateTime    @updatedAt
 }
@@ -53,6 +54,19 @@ model Campaign {
     orgId           String?
     user            User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId          String?
-    createdAt   DateTime    @default(now())
-    updatedAt   DateTime    @updatedAt
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
+}
+
+model Volunteer {
+    id          String @id @default(uuid())
+    name        String
+    description String
+    avatar      String?
+    cause       String
+    location    String
+    skills      String[]
+    eventDate   DateTime
+    orgId       String
+    org         Org     @relation(fields: [orgId], references: [id], onDelete: Cascade)
 }
