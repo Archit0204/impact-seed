@@ -33,7 +33,7 @@ export const CampaignSchema = z.object({
     description: z.string(),
     avatar: z.string().url().optional(),
     category: z.string(),
-    raisedAmount: z.number().positive("Raised amount must be positive"), 
+    raisedAmount: z.number().positive("Raised amount must be positive").optional(), 
     goalAmount: z.number().positive("Goal amount must be positive"),
     owner: z.enum(["personal", "org"]),
     orgId: z.string().uuid().optional(),

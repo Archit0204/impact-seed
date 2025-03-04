@@ -13,7 +13,7 @@ export default function Navbar() {
             <h1 onClick={() => router.push('/')} className="text-2xl font-semibold cursor-pointer">Impact Seed</h1>
             <div className="flex gap-x-6 text-lg font-medium">
                 <button className="hover:underline" onClick={() => router.push('/campaigns')}>Campaigns</button>
-                <button className="hover:underline" onClick={() => router.push('/orgs')}>Orgs</button>
+                <button className="hover:underline" onClick={() => router.push('/orgs')}>Foundations</button>
                 <button className="hover:underline" onClick={() => router.push('/volunteers')}>Volunteers</button>
                 {/* <button>Signin</button> */}
                 {

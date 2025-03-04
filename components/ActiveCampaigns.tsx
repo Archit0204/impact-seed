@@ -1,27 +1,25 @@
+import { z } from "zod";
 import ActiveCard from "./ActiveCard";
+import { CampaignSchema } from "@/lib/zod";
 
 type ActiveCampaignsProps = {
-    campaigns: {
-        title: string,
-        raisedAmount: number,
-        goalAmount: number,
-    }[];
+    campaigns: z.infer<typeof CampaignSchema>[];
 };
 
-export default function ActiveCampaigns() {
+export default function ActiveCampaigns({ campaigns }: ActiveCampaignsProps) {
 
-    const campaigns = [
-        {
-            title: "Clean Water Initiative",
-            raisedAmount: 1000,
-            goalAmount: 5000
-        },
-        {
-            title: "Eco Tree Planting",
-            raisedAmount: 7500,
-            goalAmount: 10000
-        }
-    ]
+    // const campaigns = [
+    //     {
+    //         title: "Clean Water Initiative",
+    //         raisedAmount: 1000,
+    //         goalAmount: 5000
+    //     },
+    //     {
+    //         title: "Eco Tree Planting",
+    //         raisedAmount: 7500,
+    //         goalAmount: 10000
+    //     }
+    // ]
 
     return (
         <div className="bg-customLightGray p-5 rounded-xl flex flex-col gap-y-5 shadow-lg">

@@ -19,6 +19,9 @@ export async function GET(req: NextRequest) {
         const user = await client.user.findUnique({
             where: {
                 email: session.user?.email as string
+            },
+            include: {
+                campaigns: true
             }
         });
 

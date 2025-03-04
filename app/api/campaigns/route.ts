@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import client from "@/db/index";
 import { getServerSession } from "next-auth";
 import { CampaignSchema } from "@/lib/zod";
+import { R2Upload } from "@/lib/uploadR2";
 
 export async function GET(req: NextRequest) {
     try {
@@ -47,20 +48,28 @@ export async function POST(req: NextResponse) {
 
     try {
         
-        const session = await getServerSession();
+        // const session = await getServerSession();
 
-        if (!session) {
-            return NextResponse.json({
-                success: false,
-                message: "Unauthorized"
-            }, {status: 401});
-        }
+        // if (!session) {
+        //     return NextResponse.json({
+        //         success: false,
+        //         message: "Unauthorized"
+        //     }, {status: 401});
+        // }
 
-        const body = await req.json();
+        const formData = await req.formData();
+
+        const userId = formData.get('email');
+        
+        // const body = await req.json();
         const user = await client.user.findUnique({
             where: {
                 // email: body.userId
-                email: session.user?.email as string
+                email: userId?.toString()
+            },
+            include: {
+                org: true,
+                campaigns: true
             }
         });
 
@@ -69,6 +78,35 @@ export async function POST(req: NextResponse) {
                 success: false,
                 message: "Bad Request"
             }, { status: 400 });
+        }
+
+        const name = formData.get('name');
+        const description = formData.get('description');
+        const category = formData.get('category');
+        const goal = formData.get('goal');
+        const owner = formData.get('ownership');
+        const avatar = formData.get('avatar');
+
+        const body = {
+            name: name?.toString(),
+            description: description?.toString(),
+            category: category?.toString(),
+            owner: owner?.toString(),
+            goalAmount: parseInt(goal?.toString() as string)
+        }
+
+        if (body.owner === "personal" && user.campaigns.length > 3) {
+            return NextResponse.json({
+                success: false,
+                message: "More than 3 campaigns"
+            }, { status: 402 });
+        }
+
+        if (body.owner === "org" && user.org === null) {
+            return NextResponse.json({
+                success: false,
+                message: "No Org Registered"
+            }, { status: 402 });
         }
 
         if (!CampaignSchema.safeParse(body).success) {
@@ -80,16 +118,33 @@ export async function POST(req: NextResponse) {
             }, {status: 400});
         }
 
+        let fileUrl: string = "";
+
+        if (avatar) {
+            const res = await R2Upload(avatar as File, body.name as string);
+    
+            if (!res.success) {
+                return NextResponse.json({
+                    success: false,
+                    message: "Internal Server Error",
+                    error: "R2 Error"
+                });
+            }
+
+            fileUrl = res.key as string;
+        }
+
+
         await client.campaign.create({
             data: {
                 userId: user?.id,
-                name: body.name,
-                description: body.description,
-                category: body.category,
+                name: body.name as string,
+                description: body.description as string,
+                category: body.category as string,
                 goalAmount: body.goalAmount,
-                raisedAmount: body.raisedAmount,
-                avatar: body.avatar,
-                owner: body.owner,
+                raisedAmount: 0,
+                avatar: fileUrl,
+                owner: body.owner as string,
             }
         })
 

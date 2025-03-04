@@ -18,6 +18,9 @@ export default async function Profile() {
     const user: any = await client.user.findUnique({
         where: {
             email: session.user?.email as string
+        },
+        include: {
+            campaigns: true
         }
     });
     
@@ -27,7 +30,7 @@ export default async function Profile() {
             <div className="flex flex-col gap-y-12 p-10">
                 <UserInfo user={user}/>
                 <Donations/>
-                <ActiveCampaigns/>
+                <ActiveCampaigns campaigns={user.campaigns}/>
             </div>
             <Footer/>
         </div>

@@ -59,7 +59,7 @@ export default async function Campaigns(props: { params: Params, searchParams: S
                         </div> */}
                         {
                             campaigns.length > 0 ? (
-                                <div className="grid grid-cols-3 p-5">
+                                <div className="grid grid-cols-3 p-5 gap-10">
                                     {
                                         campaigns.map(campaign => {
                                             return (

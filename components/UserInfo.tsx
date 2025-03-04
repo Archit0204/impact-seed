@@ -1,12 +1,17 @@
+"use client"
+
 import { UserSchema } from '@/lib/zod';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import z from 'zod';
 
 type UserInfoProps = {
     user: z.infer<typeof UserSchema>,
 }
 
-export default async function UserInfo({ user }: UserInfoProps) {
+export default function UserInfo({ user }: UserInfoProps) {
+
+    const router = useRouter();
 
     return (
         <div className='flex justify-between items-center p-4 shadow-lg rounded-xl'>
@@ -23,7 +28,7 @@ export default async function UserInfo({ user }: UserInfoProps) {
                 </div>
             </div>
             <div>
-                <button className='text-white bg-customBlack px-2 py-2 rounded-xl'>Start a Campaign</button>
+                <button onClick={() => router.push('/campaigns/new')} className='text-white bg-customBlack px-2 py-2 rounded-xl'>Start a Campaign</button>
             </div>
         </div>
     )
