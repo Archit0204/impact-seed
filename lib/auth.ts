@@ -60,7 +60,7 @@ export const NEXT_AUTH = {
             }
         }
     },
-    // pages: {
-    //     signIn: "/auth/signin",
-    // },
+    pages: {
+        signIn: "/auth/signin",
+    },
 }
