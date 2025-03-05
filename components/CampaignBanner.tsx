@@ -18,7 +18,7 @@ export default function CampaignBanner({ campaigns }: CampaignBannerProps) {
                 <h2 className='text-4xl font-medium'>Campaigns</h2>
                 <button onClick={() => router.push('/campaigns')} className='text-lg hover:bg-customBlack hover:text-white rounded-lg px-3 py-1'>Show All</button>
             </div>
-            <div className='w-full flex items-center py-6 justify-start'>
+            <div className='w-full flex items-center py-6 justify-start gap-x-8'>
                 {
                     campaigns && campaigns.length > 0 ? (
                         campaigns.slice(0,4).map(campaign => (

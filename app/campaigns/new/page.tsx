@@ -15,7 +15,7 @@ export default async function NewCampaign() {
     return (
         <div className="flex flex-col gap-y-8">
             <Navbar/>
-            <CampaignForm userId={session.user?.email as string}/>
+            <CampaignForm userId={session.user?.email as string} type="create"/>
             <Footer/>
         </div>
     )

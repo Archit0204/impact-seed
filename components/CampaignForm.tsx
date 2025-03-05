@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import axios from "axios"
+import axios, { isAxiosError } from "axios"
 import { useRouter } from "next/navigation"
 import { z } from "zod"
 import { CampaignSchema } from "@/lib/zod"
@@ -18,19 +18,22 @@ import { CampaignSchema } from "@/lib/zod"
 type CampaignFormProps = {
     userId: string,
     campaign?: z.infer<typeof CampaignSchema>
+    type: "create" | "edit"
 }
 
-export default function CampaignForm({ userId, campaign }: CampaignFormProps) {
+type OwnershipType = "personal" | "org";
+
+export default function CampaignForm({ userId, campaign, type }: CampaignFormProps) {
 
     const [formData, setFormData] = useState({
-        name: "",
-        description: "",
-        category: "",
-        goal: "",
-        ownership: "personal"
+        name: campaign?.name || "",
+        description: campaign?.description || "",
+        category: campaign?.category || "",
+        goal: (campaign?.goalAmount)?.toString() || "",
+        ownership: campaign?.owner as OwnershipType || "personal"
     })
     const [avatar, setAvatar] = useState<File | null>(null)
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+    const [previewUrl, setPreviewUrl] = useState<string | null>(campaign?.avatar || null)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     const router = useRouter();
@@ -46,7 +49,7 @@ export default function CampaignForm({ userId, campaign }: CampaignFormProps) {
         setFormData((prev) => ({ ...prev, category: value }))
     }
 
-    const handleOwnershipChange = (value: string) => {
+    const handleOwnershipChange = (value: OwnershipType) => {
         setFormData((prev) => ({ ...prev, ownership: value }))
     }
 
@@ -86,12 +89,25 @@ export default function CampaignForm({ userId, campaign }: CampaignFormProps) {
         formDataToSend.append('email', userId);
 
         try {
-            const response = await axios.post('/api/campaigns', formDataToSend);
-            console.log(response.data);
-            
-            router.push('/campaigns');
+            if (type === "create") {
+                const response = await axios.post('/api/campaigns', formDataToSend);
+                console.log(response.data);
+                
+                router.push('/campaigns');
+            }
+            else {
+                const response = await axios.post(`/api/campaigns/${campaign?.id}`, formDataToSend);
+                console.log(response.data);
+                
+                router.push('/profile');
+            }
         } catch (error: any) {
-            console.log("Error submitting form:", error.message)
+            if (isAxiosError(error)) {
+                console.log(error.response?.data);
+            }
+            else {
+                console.log("Error submitting form:", error.message)
+            }
         }
     }
 
@@ -99,9 +115,9 @@ export default function CampaignForm({ userId, campaign }: CampaignFormProps) {
         <div className="flex items-center justify-center min-h-screen bg-white p-4">
             <Card className="w-full max-w-2xl shadow-lg">
                 <CardHeader className="bg-customBlack text-customLightGray rounded-t-lg">
-                    <CardTitle className="text-2xl">Create New Campaign</CardTitle>
+                    <CardTitle className="text-2xl">{type === "create" ? "Create New": "Edit a"} Campaign</CardTitle>
                     <CardDescription className="text-customLightGray/80">
-                        Fill in the details to set up your new Campaign
+                        Fill in the details to {type === "create" ? "set up your new" : "edit your"} Campaign
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6 pt-6">
@@ -213,6 +229,7 @@ export default function CampaignForm({ userId, campaign }: CampaignFormProps) {
                         value={formData.ownership} 
                         onValueChange={handleOwnershipChange}
                         className="flex gap-4"
+                        disabled={type === "edit"}
                         >
                             <div className="flex items-center space-x-2">
                                 <RadioGroupItem value="personal" id="personal" className="border-customBlack/20 text-customBlack" />
@@ -221,7 +238,7 @@ export default function CampaignForm({ userId, campaign }: CampaignFormProps) {
                                 </Label>
                             </div>
                             <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="organization" id="organization" className="border-customBlack/20 text-customBlack" />
+                                <RadioGroupItem value="org" id="organization" className="border-customBlack/20 text-customBlack" />
                                 <Label htmlFor="organization" className="text-customBlack">
                                 Organization
                                 </Label>
@@ -240,7 +257,7 @@ export default function CampaignForm({ userId, campaign }: CampaignFormProps) {
                         onClick={handleSubmit}
                         className="bg-customBlack text-customLightGray hover:bg-customBlack/90"
                     >
-                        Create Campaign
+                        {type === "create" ? "Create" : "Edit"} Campaign
                     </Button>
                 </CardFooter>
             </Card>
