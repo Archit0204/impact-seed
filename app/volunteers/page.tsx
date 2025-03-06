@@ -24,27 +24,28 @@ export default async function Volunteers() {
     }
 
     return (
-        <div className="w-screen">
-            <Navbar/>
-            <div className="p-8">
-                <SearchVolunteer/>
-                {
-                    volunteers.length > 0 ? (
-                        <div className="grid grid-cols-3">
-                            {
-                                volunteers.map(volunteer => {
-                                    return (
-                                        <VolunteerCard volunteer={volunteer}/>
-                                    )
-                                })
-                            }
-                        </div>
-                    ): (
-                        <div>No programs found</div>
-                    )
-                }
+        <div className="w-screen min-h-screen flex flex-col">
+            <Navbar />
+            <div className="flex-grow p-8 flex flex-col gap-y-8">
+                <SearchVolunteer />
+                <div>
+                    <h3 className="text-2xl font-semibold">Volunteering Programs</h3>
+                    {
+                        volunteers.length > 0 ? (
+                            <div className="grid grid-cols-3">
+                                {
+                                    volunteers.map(volunteer => (
+                                        <VolunteerCard volunteer={volunteer} />
+                                    ))
+                                }
+                            </div>
+                        ) : (
+                            <div>No programs found</div>
+                        )
+                    }
+                </div>
             </div>
-            <Footer/>
+            <Footer />
         </div>
     )
 

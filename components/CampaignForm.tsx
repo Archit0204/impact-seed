@@ -156,11 +156,11 @@ export default function CampaignForm({ userId, campaign, type }: CampaignFormPro
                             <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
                         <SelectContent>
+                        <SelectItem value="education">Education</SelectItem>
+                            <SelectItem value="hunger">Hunger</SelectItem>
                             <SelectItem value="technology">Technology</SelectItem>
-                            <SelectItem value="design">Design</SelectItem>
-                            <SelectItem value="marketing">Marketing</SelectItem>
-                            <SelectItem value="business">Business</SelectItem>
-                            <SelectItem value="education">Education</SelectItem>
+                            <SelectItem value="health">Health</SelectItem>
+                            <SelectItem value="welfare">Welfare</SelectItem>
                             <SelectItem value="other">Other</SelectItem>
                         </SelectContent>
                         </Select>
