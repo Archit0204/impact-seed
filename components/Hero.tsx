@@ -20,7 +20,7 @@ export default function Hero() {
 
     return (
         <section className="flex flex-col h-full items-center justify-center gap-y-8 p-8">
-            <p className="text-8xl">Discover meaningful ways to make a donation</p>
+            <p className="text-8xl">Discover meaningful ways to make a change</p>
             <form onSubmit={searchHandler} className="w-[40%] relative">
                 <input type="text" name="search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search Campaigns"
                 className="py-3 pl-4 pr-14 border-2 border-customBlack w-full rounded-full focus:outline-none"/>

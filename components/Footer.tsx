@@ -10,7 +10,7 @@ export default function Footer() {
                     <h3 className="text-xl font-medium">Contact Us</h3>
                     <div className="flex flex-col text-sm">
                         <p>Chitkara University, Rajpura</p>
-                        <p>123-456-789</p>
+                        <p>+69 123-456-789</p>
                     </div>
                 </div>
                 <div className="flex flex-col gap-y-3">

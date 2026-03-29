@@ -10,7 +10,7 @@ export default function Navbar() {
 
     return (
         <nav className="bg-white flex px-16 pt-4 justify-between items-center">
-            <h1 onClick={() => router.push('/')} className="text-2xl font-semibold cursor-pointer">Impact Seed</h1>
+            <h1 onClick={() => router.push('/')} className="text-3xl font-semibold cursor-pointer">Impact Seed</h1>
             <div className="flex gap-x-6 text-lg font-medium">
                 <button className="hover:underline" onClick={() => router.push('/campaigns')}>Campaigns</button>
                 <button className="hover:underline" onClick={() => router.push('/orgs')}>Foundations</button>
