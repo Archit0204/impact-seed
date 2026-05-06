@@ -3,6 +3,7 @@ import client from "@/db/index";
 import { getServerSession } from "next-auth";
 import { CampaignSchema } from "@/lib/zod";
 import { R2Upload } from "@/lib/uploadR2";
+import { NEXT_AUTH } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
     try {
@@ -26,7 +27,13 @@ export async function GET(req: NextRequest) {
         }
 
         const campaigns = await client.campaign.findMany({
-            where: whereCondition
+            where: whereCondition,
+            include: {
+                _count: {
+                    select: { donations: true }
+                }
+            },
+            orderBy: { createdAt: 'desc' }
         });
 
         return NextResponse.json({
@@ -44,28 +51,24 @@ export async function GET(req: NextRequest) {
     }
 }
 
-export async function POST(req: NextResponse) {
+export async function POST(req: NextRequest) {
 
     try {
         
-        // const session = await getServerSession();
+        const session = await getServerSession(NEXT_AUTH);
 
-        // if (!session) {
-        //     return NextResponse.json({
-        //         success: false,
-        //         message: "Unauthorized"
-        //     }, {status: 401});
-        // }
+        if (!session) {
+            return NextResponse.json({
+                success: false,
+                message: "Unauthorized"
+            }, {status: 401});
+        }
 
         const formData = await req.formData();
 
-        const userId = formData.get('email');
-        
-        // const body = await req.json();
         const user = await client.user.findUnique({
             where: {
-                // email: body.userId
-                email: userId?.toString()
+                email: session.user?.email as string
             },
             include: {
                 org: true,
@@ -114,7 +117,7 @@ export async function POST(req: NextResponse) {
             console.log(CampaignSchema.safeParse(body).error)
             return NextResponse.json({
                 success: false,
-                message: "Inavalid Data",
+                message: "Invalid Data",
             }, {status: 400});
         }
 

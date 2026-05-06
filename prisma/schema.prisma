@@ -10,20 +10,22 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
-    id          String      @id @default(uuid())
-    email       String      @unique
-    firstName   String
-    lastName    String?
-    avatar      String?
-    oauthId     String
-    createdAt   DateTime    @default(now())
-    updatedAt   DateTime    @updatedAt
-    campaigns   Campaign[]
-    org         Org?
+    id                      String                  @id @default(uuid())
+    email                   String                  @unique
+    firstName               String
+    lastName                String?
+    avatar                  String?
+    oauthId                 String
+    role                    String                  @default("user") // "user" | "admin"
+    createdAt               DateTime                @default(now())
+    updatedAt               DateTime                @updatedAt
+    campaigns               Campaign[]
+    org                     Org?
+    donations               Donation[]
+    volunteerRegistrations  VolunteerRegistration[]
 }
 
 model Org {
@@ -41,32 +43,60 @@ model Org {
 }
 
 model Campaign {
-    id              String  @id @default(uuid())
+    id              String      @id @default(uuid())
     name            String
     description     String
     avatar          String?
     category        String
-    raisedAmount    Float
+    raisedAmount    Float       @default(0)
     goalAmount      Float
-    approved        Boolean @default(false)
+    approved        Boolean     @default(false)
     owner           String 
-    org             Org?    @relation(fields: [orgId], references: [id], onDelete: Cascade)
+    org             Org?        @relation(fields: [orgId], references: [id], onDelete: Cascade)
     orgId           String?
-    user            User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user            User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId          String?
+    donations       Donation[]
     createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt
 }
 
 model Volunteer {
-    id          String @id @default(uuid())
-    name        String
-    description String
-    avatar      String?
-    cause       String
-    location    String
-    skills      String[]
-    eventDate   DateTime
-    orgId       String
-    org         Org     @relation(fields: [orgId], references: [id], onDelete: Cascade)
+    id              String                  @id @default(uuid())
+    name            String
+    description     String
+    avatar          String?
+    cause           String
+    location        String
+    skills          String[]
+    eventDate       DateTime
+    orgId           String
+    org             Org                     @relation(fields: [orgId], references: [id], onDelete: Cascade)
+    registrations   VolunteerRegistration[]
+    createdAt       DateTime                @default(now())
+    updatedAt       DateTime                @updatedAt
+}
+
+model Donation {
+    id            String    @id @default(uuid())
+    amount        Float
+    anonymous     Boolean   @default(false)
+    message       String?
+    campaign      Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+    campaignId    String
+    user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+    userId        String?
+    createdAt     DateTime  @default(now())
+}
+
+model VolunteerRegistration {
+    id            String    @id @default(uuid())
+    user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId        String
+    volunteer     Volunteer @relation(fields: [volunteerId], references: [id], onDelete: Cascade)
+    volunteerId   String
+    status        String    @default("pending") // pending, accepted, rejected
+    createdAt     DateTime  @default(now())
+
+    @@unique([userId, volunteerId])
 }

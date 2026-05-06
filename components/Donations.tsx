@@ -1,37 +1,42 @@
+import { Heart } from "lucide-react";
 import DonationCard from "./DonationCard"
 
-export default async function Donations() {
+type DonationsProps = {
+    donations?: {
+        id: string;
+        amount: number;
+        anonymous: boolean;
+        message?: string;
+        createdAt: string;
+        campaign: {
+            id: string;
+            name: string;
+            avatar?: string;
+            category: string;
+        };
+    }[];
+};
 
-    const donations = [
-        {
-            title: "Save the Children",
-            date: "2021-10-10",
-            amount: 100
-        },
-        {
-            title: "Save the Children",
-            date: "2021-10-10",
-            amount: 100
-        },
-        {
-            title: "Save the Children",
-            date: "2021-10-10",
-            amount: 100
-        }
-    ]
-
+export default function Donations({ donations = [] }: DonationsProps) {
     return (
-        <div className="bg-customLightGray p-5 rounded-xl flex flex-col gap-y-5 shadow-lg">
-            <h1 className="text-2xl font-semibold">Past Donations</h1>
-            <div className="flex gap-x-5 flex-1">
-                {
-                    donations && donations.map((donation, index) => {
-                        return (
-                            <DonationCard key={index} donation={donation}/>
-                        )
-                    })
-                }
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-5">
+                <Heart className="w-5 h-5 text-rose-500" />
+                <h2 className="text-xl font-bold text-slate-900">Donation History</h2>
             </div>
+            {donations.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {donations.map((donation) => (
+                        <DonationCard key={donation.id} donation={donation} />
+                    ))}
+                </div>
+            ) : (
+                <div className="text-center py-12 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                    <Heart className="w-8 h-8 text-slate-300 mx-auto mb-3" />
+                    <p className="text-slate-400">No donations yet</p>
+                    <p className="text-sm text-slate-300 mt-1">Your donation history will appear here</p>
+                </div>
+            )}
         </div>
     ) 
 }

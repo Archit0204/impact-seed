@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import client from "@/db/index";
 import { getServerSession } from "next-auth";
+import { NEXT_AUTH } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
 
@@ -18,7 +19,15 @@ export async function GET(req: NextRequest) {
 
 
         const orgs = await client.org.findMany({
-            where: whereCondition
+            where: whereCondition,
+            include: {
+                _count: {
+                    select: { 
+                        campaigns: true,
+                        volunteer: true
+                    }
+                }
+            }
         });
 
         return NextResponse.json({
@@ -40,21 +49,20 @@ export async function POST(req: NextRequest) {
 
     try {
         
-        const session = await getServerSession();
+        const session = await getServerSession(NEXT_AUTH);
 
-        // if (!session) {
-        //     return NextResponse.json({
-        //         success: false,
-        //         message: "Unauthorized",
-        //     }, { status: 401 });
-        // }
+        if (!session) {
+            return NextResponse.json({
+                success: false,
+                message: "Unauthorized",
+            }, { status: 401 });
+        }
 
         const body = await req.json();
 
         const user = await client.user.findUnique({
             where: {
-                // email: session.user?.email as string
-                email: body.userId
+                email: session.user?.email as string
             }
         });
 
